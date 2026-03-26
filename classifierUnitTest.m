@@ -28,6 +28,11 @@ mdl_1.addBias = true;
 mdl_1.shuffleEachEpoch = true;
 
 mdl_1 = mdl_1.fit(X, Y);
+yhat = mdl_1.predict(X);
+acc = mdl_1.score(X, Y);
+
+disp("accuracy 1:")
+disp(acc)
 
 mdl2 = lmsClassifier2( ...
        'learningRate',0.05,...
@@ -36,12 +41,10 @@ mdl2 = lmsClassifier2( ...
        'shuffleEachEpoch', true);
 
 mdl2 = mdl2.fit(X, Y);
+yhat = mdl2.predict(X);
+acc = mdl2.score(X, Y);
 
-yhat = mdl_1.predict(X);
-
-acc = mdl_1.score(X, Y);
-
-disp("accuracy: ")
+disp("accuracy 2: ")
 disp(acc)
 
 %% END
