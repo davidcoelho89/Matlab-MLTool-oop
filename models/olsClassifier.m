@@ -45,7 +45,7 @@ classdef olsClassifier < linearClassifier
         % W = [];    
         % Yh = [];
 
-        name = 'ols';
+        modelName = 'ols';
     end
     
     methods
