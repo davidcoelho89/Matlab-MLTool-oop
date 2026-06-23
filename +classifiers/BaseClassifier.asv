@@ -1,18 +1,48 @@
-classdef (Abstract) baseClassifier
-    %BASECLASSIFIER Classe abstrata base para classificadores
+classdef (Abstract) BaseClassifier
     %
-    % Convenção da biblioteca:
+    % BASECLASSIFIER Abstract base class for classifiers
+    %
+    % Library Convetion:
     %   X : [N x p]
     %   y : [N x 1]
     %
-    % N = número de amostras
-    % p = número de atributos
+    % N = number of samples
+    % p = number of attributes
+    % 
+    % Properties (Hyperparameters - for setting)
+    %
+    %   addBias = add bias (or not) to the model (true or false)
+    %
+    % Properties (Parameters - protected)
+    %
+    %	modelName = a string that has the model name
+    %   isTrained = verify if the model was trained or not
+    %   classLabels = hold class labels
+    %   nFeatures = hold the number of features
+    %   nClasses = hold the number of classes
+    %
+    % Methods (for external use)
+    %
+    %   
+    %
+    % Methods (protected)
+    % 
+    %   function validateFitInputs(obj, X, y)
+    %   function validatePredictInput(obj, X)
+    %   function y = adjustLabels(~, y)
+    %   function Xb = addBiasTerm(obj, X)
+    %   [Yoh, classLabels] = oneHotEncodeLabels(~, y)
+    %   function yhat = decodeScores(~, scores, classLabels)
+    %
+    % ----------------------------------------------------------------
 
+    % Hyperparameters
     properties
         addBias (1,1) logical = true
     end
-
-    properties (SetAccess = protected)
+    
+    % Parameters
+    properties (GetAccess = public, SetAccess = protected)
         modelName (1,1) string = ""
         isTrained (1,1) logical = false
         classLabels = []
@@ -27,7 +57,7 @@ classdef (Abstract) baseClassifier
 
     methods
         function acc = score(obj, X, y)
-            y = obj.normalizeLabels(y);
+            y = obj.adjustLabels(y);
             yhat = obj.predict(X);
             acc = mean(yhat == y);
         end
@@ -40,7 +70,7 @@ classdef (Abstract) baseClassifier
                 error('X must be a real numeric matrix.');
             end
 
-            if isempty(X) || ndims(X) ~= 2
+            if isempty(X) || ~ismatrix(X)
                 error('X must be a non-empty 2D matrix with size [N x p].');
             end
 
@@ -48,7 +78,7 @@ classdef (Abstract) baseClassifier
                 error('y must not be empty.');
             end
 
-            y = obj.normalizeLabels(y);
+            y = obj.adjustLabels(y);
 
             if size(X,1) ~= numel(y)
                 error('Number of rows in X must match length of y.');
@@ -72,7 +102,7 @@ classdef (Abstract) baseClassifier
                 error('X must be a real numeric matrix.');
             end
 
-            if isempty(X) || ndims(X) ~= 2
+            if isempty(X) || ~ismatrix(X)
                 error('X must be a non-empty 2D matrix with size [N x p].');
             end
 
@@ -85,7 +115,7 @@ classdef (Abstract) baseClassifier
             end
         end
 
-        function y = normalizeLabels(~, y)
+        function y = adjustLabels(~, y)
             if isrow(y)
                 y = y.';
             end
