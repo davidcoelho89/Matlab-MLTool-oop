@@ -70,7 +70,7 @@ classdef (Abstract) BaseClassifier < handle
             if isempty(X) || ~ismatrix(X)
                 error('X must be a non-empty 2D matrix with size [N x p].');
             end
-
+            
             if size(X,2) ~= obj.nFeatures
                 error('X must have %d columns (features).', obj.nFeatures);
             end

@@ -67,10 +67,10 @@ classdef OLSClassifier < mltoolbox.classifiers.LinearClassifier
         % Training Function (N instances)
         function obj = fit(obj,X,y)
             
+            X = obj.addBiasTerm(X);
+            
             obj.validateFitInputs(X,y)
             
-            X = obj.addBiasTerm(X);
-    
             if ~isempty(obj.encoder)
                 Y = obj.encoder.transform(y);
             else
