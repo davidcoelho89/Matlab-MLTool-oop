@@ -29,7 +29,7 @@ classdef (Abstract) LinearClassifier < mltoolbox.classifiers.BaseClassifier
     
     % Hyperparameters
     properties
-        
+        encoder = [];
     end
 
     % Parameters
@@ -42,14 +42,22 @@ classdef (Abstract) LinearClassifier < mltoolbox.classifiers.BaseClassifier
         % Prediction Function
         function yhat = predict(obj, X)
             
-            Xb = addBiasTerm(obj, X);
+            obj.validatePredictInput(X);
+            
+            Xb = obj.addBiasTerm(X);
+            
+            if size(Xb,2) ~= size(obj.W,2)
+                error("Dimension mismatch.");
+            end
             
             scores = Xb * obj.W;
             
-            % multiclass decision rule (argmax)
-            [~, idx] = max(scores, [], 2);
-
-            yhat = idx;
+            if ~isempty(obj.encoder)
+                yhat = obj.encoder.inverse_transform(scores);
+            else
+                [~, yhat] = max(scores, [], 2);
+            end
+            
         end
 
     end % end methods

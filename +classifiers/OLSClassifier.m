@@ -1,4 +1,4 @@
-classdef OLSClassifier < mltoolbox.classifiers.linearClassifier
+classdef OLSClassifier < mltoolbox.classifiers.LinearClassifier
     % 
     % --- OLSCLASSIFIER - Ordinary Least-Squares Classifier ---
     %
@@ -18,7 +18,7 @@ classdef OLSClassifier < mltoolbox.classifiers.linearClassifier
     % Properties (Parameters)
     %
     %   .
-    % 
+    %   
     % Methods (for external use)
     %
     %   .
@@ -31,40 +31,69 @@ classdef OLSClassifier < mltoolbox.classifiers.linearClassifier
 
     % Hyperparameters
     properties
-        approximation = 'pinv';
+        approximation = 'pinv';     % 'svd' | 'theoretical' |
         regularization = 0.0001;
     end
     
     % Parameters
     properties (GetAccess = public, SetAccess = protected)
-        modelName = 'ols';
+        
     end
     
     methods
         
         % Constructor
-        function self = OLSClassifier()
-            % Set the hyperparameters after initializing!
+        function obj = OLSClassifier(varargin)
+            
+            obj.modelName = "OLS Classifier";
+            
+            if mod(nargin,2) ~= 0
+                error('Arguments must be given as name-value pairs.');
+            end
+            
+           for k = 1:2:nargin
+                name = varargin{k};
+                value = varargin{k+1};
+
+                if ~isprop(obj, name)
+                    error('Unknown property: %s', string(name));
+                end
+
+                obj.(name) = value;
+            end 
+            
         end
         
         % Training Function (N instances)
-        function self = fit(self,X,Y)
+        function obj = fit(obj,X,y)
             
-            [p,N] = size(X);
-            if(self.add_bias)
-                p = p+1;
-                X = [ones(1,N) ; X];
+            obj.validateFitInputs(X,y)
+            
+            X = obj.addBiasTerm(X);
+    
+            if ~isempty(obj.encoder)
+                Y = obj.encoder.transform(y);
+            else
+                [Y, classLabels] = obj.oneHotEncodeLabels(y);
+                obj.classLabels = classLabels;
             end
             
-            if(strcmp(self.approximation,'pinv'))
-                self.W = Y*pinv(X);
-            elseif(strcmp(self.approximation,'svd'))
-                self.W = Y/X;
-            elseif(strcmp(self.approximation,'theoretical'))
-                self.W = Y*X'/(X*X' + self.regularization * eye(p,p));
-            else
-                self.W = Y*pinv(X);
-            end            
+            obj.nClasses = size(Y,2);
+            obj.nFeatures = size(X,2);
+            
+            switch obj.approximation
+                case 'pinv'
+                    obj.W = pinv(X) * Y;
+                 case 'svd'
+                    obj.W = X \ Y;
+                case 'theoretical'
+                    p = size(X,2);
+                    obj.W = (X'*X + obj.regularization*eye(p)) \ (X'*Y);
+                otherwise
+                    obj.W = pinv(X) * Y;                    
+            end
+            
+            obj.isTrained = true;
             
         end
         

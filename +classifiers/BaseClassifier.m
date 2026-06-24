@@ -1,41 +1,5 @@
-classdef (Abstract) BaseClassifier
-    %
-    % BASECLASSIFIER Abstract base class for classifiers
-    %
-    % Library Convetion:
-    %   X : [N x p]
-    %   y : [N x 1]
-    %
-    % N = number of samples
-    % p = number of attributes
-    % 
-    % Properties (Hyperparameters - for setting)
-    %
-    %   addBias = add bias (or not) to the model (true or false)
-    %
-    % Properties (Parameters - protected)
-    %
-    %	modelName = a string that has the model name
-    %   isTrained = verify if the model was trained or not
-    %   classLabels = hold class labels
-    %   nFeatures = hold the number of features
-    %   nClasses = hold the number of classes
-    %
-    % Methods (for external use)
-    %
-    %   acc = score(obj, X, y)
-    %
-    % Methods (protected)
-    % 
-    %   function validateFitInputs(obj, X, y)
-    %   function validatePredictInput(obj, X)
-    %   function y = adjustLabels(~, y)
-    %   function Xb = addBiasTerm(obj, X)
-    %   [Yoh, classLabels] = oneHotEncodeLabels(~, y)
-    %   function yhat = decodeScores(~, scores, classLabels)
-    %
-    % ----------------------------------------------------------------
-
+classdef (Abstract) BaseClassifier < handle
+    
     % Hyperparameters
     properties
         addBias (1,1) logical = true
@@ -45,19 +9,17 @@ classdef (Abstract) BaseClassifier
     properties (GetAccess = public, SetAccess = protected)
         modelName (1,1) string = ""
         isTrained (1,1) logical = false
-        classLabels = []
+        classLabels = [];
         nFeatures (1,1) double = 0
         nClasses (1,1) double = 0
     end
 
     methods (Abstract)
         obj = fit(obj, X, y)
-        yhat = predict(obj, X)
     end
 
     methods
         function acc = score(obj, X, y)
-            y = obj.adjustLabels(y);
             yhat = obj.predict(X);
             acc = mean(yhat == y);
         end
@@ -65,7 +27,13 @@ classdef (Abstract) BaseClassifier
 
     methods (Access = protected)
         
-        function validateFitInputs(obj, X, y)
+        function check_is_fitted(obj)
+            if ~obj.isTrained
+                error("Model not fitted. Call fit() first.");
+            end
+        end
+        
+        function validateFitInputs(~, X, y)
             if ~isnumeric(X) || ~isreal(X)
                 error('X must be a real numeric matrix.');
             end
@@ -78,9 +46,7 @@ classdef (Abstract) BaseClassifier
                 error('y must not be empty.');
             end
 
-            y = obj.adjustLabels(y);
-
-            if size(X,1) ~= numel(y)
+            if size(X,1) ~= size(y,1)
                 error('Number of rows in X must match length of y.');
             end
 
@@ -94,9 +60,8 @@ classdef (Abstract) BaseClassifier
         end
 
         function validatePredictInput(obj, X)
-            if ~obj.isTrained
-                error('Model has not been trained yet.');
-            end
+            
+            obj.check_is_fitted();
 
             if ~isnumeric(X) || ~isreal(X)
                 error('X must be a real numeric matrix.');
@@ -115,16 +80,6 @@ classdef (Abstract) BaseClassifier
             end
         end
 
-        function y = adjustLabels(~, y)
-            if isrow(y)
-                y = y.';
-            end
-
-            if ~isvector(y)
-                error('y must be a label vector.');
-            end
-        end
-
         function Xb = addBiasTerm(obj, X)
             if obj.addBias
                 Xb = [ones(size(X,1),1), X];
@@ -132,22 +87,31 @@ classdef (Abstract) BaseClassifier
                 Xb = X;
             end
         end
-
-        function [Yoh, classLabels] = oneHotEncodeLabels(~, y)
+        
+      	function [Yoh, classLabels] = oneHotEncodeLabels(~, y)
+            
             classLabels = unique(y, 'stable');
-            nClasses = numel(classLabels);
-            N = numel(y);
+            n = length(y);
+            K = length(classLabels);
+            
+            Yoh = zeros(n,K);
 
-            Yoh = zeros(N, nClasses);
-
-            for k = 1:nClasses
+            for k = 1:K
                 Yoh(:,k) = (y == classLabels(k));
             end
         end
 
-        function yhat = decodeScores(~, scores, classLabels)
+        function yhat = decodeScores(obj, scores)
+            
+            obj.check_is_fitted();
+            
+            if isempty(obj.classLabels)
+                error("classLabels not initialized. Call fit().");
+            end
+            
             [~, idx] = max(scores, [], 2);
-            yhat = classLabels(idx);
+            yhat = obj.classLabels(idx);
+            
         end
         
     end
