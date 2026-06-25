@@ -31,7 +31,7 @@ classdef OLSClassifier < mltoolbox.classifiers.LinearClassifier
 
     % Hyperparameters
     properties
-        approximation = 'pinv';     % 'svd' | 'theoretical' |
+        approximation = 'pinv';     % | 'svd' | 'theoretical' |
         regularization = 0.0001;
     end
     

@@ -11,7 +11,7 @@ classdef train_test_split
             shuffle = p.Results.shuffle;
 
             if shuffle
-                [X,y] = mltoolbox.preprocessing.shuffle_data.shuffle(X,y);
+                [X,y] = mltoolbox.preprocessing.shuffle_data(X,y);
             end
 
             N = size(X,1);

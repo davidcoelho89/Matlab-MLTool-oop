@@ -43,10 +43,10 @@ classdef (Abstract) LinearClassifier < mltoolbox.classifiers.BaseClassifier
         function yhat = predict(obj, X)
             
             Xb = obj.addBiasTerm(X);
-            
+
             obj.validatePredictInput(Xb);
             
-            if size(Xb,2) ~= size(obj.W,2)
+            if size(Xb,2) ~= size(obj.W,1)
                 error("Dimension mismatch.");
             end
             
