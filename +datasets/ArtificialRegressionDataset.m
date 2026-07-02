@@ -42,6 +42,9 @@ classdef ArtificialRegressionDataset
             obj.name = string(datasetName);
 
             switch lower(datasetName)
+                
+                case lower("LinearRegression")
+                    obj = obj.generateLinearRegression();
 
                 case lower("MultipleLinearRegression")
                     obj = obj.generateMultipleLinearRegression();
@@ -65,6 +68,26 @@ classdef ArtificialRegressionDataset
     end
     
     methods (Access = private)
+        
+        function obj = generateLinearRegression(obj)
+            
+            x = linspace(0,10,obj.nSamples)';
+            
+            slope = 2;
+            intercept = 1;
+            
+            y = slope*x + intercept + obj.noiseStd*randn(obj.nSamples,1);
+            
+            obj.X = x;
+            obj.Y = y;
+            
+            obj.featureNames = "x";
+            obj.targetName = "y";
+            
+            obj.description = ...
+                "Artificial linear regression: y = 2*x + 1 + noise.";
+            
+        end
 
         function obj = generateMultipleLinearRegression(obj)
 
