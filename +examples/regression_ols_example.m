@@ -14,8 +14,8 @@ clc;
 % LinearRegression ; MultipleLinearRegression ; 
 % PolynomialRegression ; 
 dataName = "MultipleLinearRegression"; 	
-number_of_samples = 200;
-noise_std = 0.10;
+number_of_samples = 500;
+noise_std = 0.01;
 randomState = 10;
 
 % Model Options:
@@ -33,8 +33,8 @@ Y = data.Y;
 
 %% PLOT DATASET
 
-figure;
-plot(X,Y,'.');
+%figure;
+%plot(X,Y,'.');
 
 
 %% DATA PRE-PROCESSING
