@@ -9,7 +9,7 @@ clc;
 
 %% OPTIONS
 
-dataName = "LinearRegression"; 	% SincRegression ; SinRegression ; FrankeFunction
+dataName = "MultipleLinearRegression"; 	% SincRegression ; SinRegression ; FrankeFunction
                                 % LinearRegression ; MultipleLinearRegression ; 
                                 % PolynomialRegression ; 
 number_of_samples = 200;
@@ -29,6 +29,8 @@ Y = data.Y;
 
 figure;
 plot(X,Y,'.');
+
+
 
 %% END
 
