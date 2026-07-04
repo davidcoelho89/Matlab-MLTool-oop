@@ -1,6 +1,6 @@
-classdef (Abstract) LinearClassifier < mltoolbox.baseModels.BaseClassifier
+classdef (Abstract) LinearRegressor < mltoolbox.baseModels.BaseRegressor
     %
-    % LINEARCLASSIFIER Abstract base class for linear classifiers
+    % LINEARREGRESSOR Abstract base class for linear regressors
     %
     % Library Convetion:
     %   X : [N x p]
@@ -15,7 +15,7 @@ classdef (Abstract) LinearClassifier < mltoolbox.baseModels.BaseClassifier
     %
     % Properties (Parameters - protected)
     %
-    %   W = regression matrix [Nc x p] or [Nc x p+1]
+    %   W = regression matrix [Ny x p] or [Ny x p+1]
     %
     % Methods (for external use)
     %
@@ -29,36 +29,29 @@ classdef (Abstract) LinearClassifier < mltoolbox.baseModels.BaseClassifier
     
     % Hyperparameters
     properties
-        encoder = [];
+        
     end
-
-    % Parameters
+    
+	% Parameters
     properties (GetAccess = public, SetAccess = protected)
        W double = []   
     end
-
+    
     methods
-
-        % Prediction Function
+        
         function yhat = predict(obj, X)
             
             Xb = obj.addBiasTerm(X);
-
+            
             obj.validatePredictInput(Xb);
             
             obj.validateEstimationMatrix(Xb);
             
-            y_hat_mult = Xb * obj.W;
-            
-            if ~isempty(obj.encoder)
-                yhat = obj.encoder.inverse_transform(y_hat_mult);
-            else
-                [~, yhat] = max(y_hat_mult, [], 2);
-            end
+            yhat = Xb * obj.W;
             
         end
-
-    end % end methods
+        
+    end
     
     methods (Access = protected)
         
@@ -70,5 +63,4 @@ classdef (Abstract) LinearClassifier < mltoolbox.baseModels.BaseClassifier
         
     end
     
-
-end % end class
+end
