@@ -1,6 +1,6 @@
-classdef (Abstract) LinearClassifier < mltoolbox.classifiers.BaseClassifier
+classdef (Abstract) LinearRegressor < mltoolbox.baseModels.BaseRegressor
     %
-    % LINEARCLASSIFIER Abstract base class for linear classifiers
+    % LINEARREGRESSOR Abstract base class for linear regressors
     %
     % Library Convetion:
     %   X : [N x p]
@@ -15,7 +15,7 @@ classdef (Abstract) LinearClassifier < mltoolbox.classifiers.BaseClassifier
     %
     % Properties (Parameters - protected)
     %
-    %   W = regression matrix [Nc x p] or [Nc x p+1]
+    %   W = regression matrix [Ny x p] or [Ny x p+1]
     %
     % Methods (for external use)
     %
@@ -29,37 +29,38 @@ classdef (Abstract) LinearClassifier < mltoolbox.classifiers.BaseClassifier
     
     % Hyperparameters
     properties
-        encoder = [];
+        
     end
-
-    % Parameters
+    
+	% Parameters
     properties (GetAccess = public, SetAccess = protected)
        W double = []   
     end
-
+    
     methods
-
-        % Prediction Function
+        
         function yhat = predict(obj, X)
             
             Xb = obj.addBiasTerm(X);
-
+            
             obj.validatePredictInput(Xb);
             
-            if size(Xb,2) ~= size(obj.W,1)
-                error("Dimension mismatch.");
-            end
+            obj.validateEstimationMatrix(Xb);
             
-            scores = Xb * obj.W;
-            
-            if ~isempty(obj.encoder)
-                yhat = obj.encoder.inverse_transform(scores);
-            else
-                [~, yhat] = max(scores, [], 2);
-            end
+            yhat = Xb * obj.W;
             
         end
-
-    end % end methods
-
-end % end class
+        
+    end
+    
+    methods (Access = protected)
+        
+        function validateEstimationMatrix(obj, X)
+            if size(X,2) ~= size(obj.W,1)
+                error("There is a Dimension mismatch between X and W.");
+            end
+        end
+        
+    end
+    
+end

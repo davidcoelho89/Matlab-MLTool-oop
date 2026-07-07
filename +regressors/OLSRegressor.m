@@ -1,10 +1,10 @@
-classdef OLSClassifier < mltoolbox.baseModels.LinearClassifier
+classdef OLSRegressor < mltoolbox.baseModels.LinearRegressor
     % 
-    % --- OLSCLASSIFIER - Ordinary Least-Squares Classifier ---
+    % --- OLSREGRESSOR - Ordinary Least-Squares Regressor ---
     %
     % Library Convetion:
     %   X : [N x p]
-    %   y : [N x 1]
+    %   Y : [N x Ny]
     %
     % Properties (Hyperparameters)
     %
@@ -45,7 +45,7 @@ classdef OLSClassifier < mltoolbox.baseModels.LinearClassifier
         % Constructor
         function obj = OLSClassifier(varargin)
             
-            obj.modelName = "OLS Classifier";
+            obj.modelName = "OLS Regressor";
             
             if mod(nargin,2) ~= 0
                 error('Arguments must be given as name-value pairs.');
@@ -65,22 +65,15 @@ classdef OLSClassifier < mltoolbox.baseModels.LinearClassifier
         end
         
         % Training Function (N instances)
-        function obj = fit(obj,X,y)
+        function obj = fit(obj,X,Y)
             
             X = obj.addBiasTerm(X);
             
-            obj.validateFitInputs(X,y)
-            
-            obj.nFeatures = size(X,2);
+            obj.validateFitInputs(X,Y)
 
-            if ~isempty(obj.encoder)
-                Y = obj.encoder.transform(y);
-            else
-                [Y, classLabels] = obj.oneHotEncodeLabels(y);
-                obj.classLabels = classLabels;
-            end
+            obj.nFeatures = size(X,2);
             
-            obj.nClasses = size(Y,2);
+            obj.nOutputs = size(Y,2);
             
             switch obj.approximation
                 case 'pinv'
