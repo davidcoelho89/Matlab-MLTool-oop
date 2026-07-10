@@ -43,7 +43,7 @@ classdef OLSRegressor < mltoolbox.baseModels.LinearRegressor
     methods
         
         % Constructor
-        function obj = OLSClassifier(varargin)
+        function obj = OLSRegressor(varargin)
             
             obj.modelName = "OLS Regressor";
             

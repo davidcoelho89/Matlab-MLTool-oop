@@ -57,5 +57,6 @@ classdef DataScaler < handle
             obj.fit(X);
             Xnorm = obj.transform(X);
         end
+        
     end
 end

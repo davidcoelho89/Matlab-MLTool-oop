@@ -10,17 +10,19 @@ clc;
 %% OPTIONS
 
 % Data Options:
-% SincRegression ; SinRegression ; FrankeFunction
-% LinearRegression ; MultipleLinearRegression ; 
-% PolynomialRegression ; 
-dataName = "MultipleLinearRegression"; 	
-number_of_samples = 500;
+dataName = "MultipleLinearRegression"; % LinearRegression MultipleLinearRegression PolynomialRegression SinRegression SincRegression FrankeFunction
+number_of_samples = 100;
 noise_std = 0.01;
 randomState = 10;
 
-% Model Options:
+% Pre-processing options:
+shuffle = true;
+train_ratio = 0.7;
+normalization = 'zscore';
 
-
+% Model options:
+approximation = 'theoretical';     % 'pinv' 'svd' 'theoretical'
+regularization = 0.0001;
 
 %% LOAD DATASET
 
@@ -36,24 +38,26 @@ Y = data.Y;
 %figure;
 %plot(X,Y,'.');
 
-
 %% DATA PRE-PROCESSING
 
 % Shuffle data
-[X,Y] = mltoolbox.preprocessing.shuffle_data(X,Y);
+if shuffle
+    [X,Y] = mltoolbox.preprocessing.shuffle_data(X,Y);
+end
 
 % Split train x test
 [Xtr,Xts,Ytr,Yts] = ...
-    mltoolbox.preprocessing.train_test_split.split(X,Y,'train_ratio',0.7);
+    mltoolbox.preprocessing.train_test_split.split(X,Y,'train_ratio',train_ratio);
 
 % Z-score Normalization
-scaler = mltoolbox.preprocessing.DataScaler('mode','zscore');
+scaler = mltoolbox.preprocessing.DataScaler('mode',normalization);
 Xtr_norm = scaler.fit_transform(Xtr);
 Xts_norm = scaler.transform(Xts);
 
 %% REGRESSION MODEL: LOAD / TRAIN / TEST
 
-model = mltoolbox.regressors.OLSRegressor();
+model = mltoolbox.regressors.OLSRegressor('approximation',approximation, ...
+                                          'regularization',regularization);
 
 model.fit(Xtr_norm,Ytr);
 
