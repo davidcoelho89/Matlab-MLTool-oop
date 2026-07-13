@@ -1,33 +1,4 @@
 classdef OLSClassifier < mltoolbox.baseModels.LinearClassifier
-    % 
-    % --- OLSCLASSIFIER - Ordinary Least-Squares Classifier ---
-    %
-    % Library Convetion:
-    %   X : [N x p]
-    %   y : [N x 1]
-    %
-    % Properties (Hyperparameters)
-    %
-    %   approximation: which aproximation method is used
-    %     'pinv'       : W = Y*pinv(X);
-    %     'svd'        : W = Y/X;
-    %     'theoretical': W = Y*X'/(X*X' + regularization * eye(p,p));
-    %   regularization: used to mitigate numerical computation errors
-    %     (constant)
-    %
-    % Properties (Parameters)
-    %
-    %   .
-    %   
-    % Methods (for external use)
-    %
-    %   .
-    %
-    % Methods (protected)
-    %
-    %   .
-    %
-    % ----------------------------------------------------------------
 
     % Hyperparameters
     properties

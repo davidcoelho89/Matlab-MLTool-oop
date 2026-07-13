@@ -10,9 +10,9 @@ clc;
 %% OPTIONS
 
 % Data Options:
-dataName = "MultipleLinearRegression"; % LinearRegression MultipleLinearRegression PolynomialRegression SinRegression SincRegression FrankeFunction
+dataName = "LinearRegression"; % LinearRegression MultipleLinearRegression PolynomialRegression SinRegression SincRegression FrankeFunction
 number_of_samples = 100;
-noise_std = 0.01;
+noise_std = 0.00;
 randomState = 10;
 
 % Pre-processing options:
