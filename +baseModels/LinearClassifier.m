@@ -1,31 +1,4 @@
 classdef (Abstract) LinearClassifier < mltoolbox.baseModels.BaseClassifier
-    %
-    % LINEARCLASSIFIER Abstract base class for linear classifiers
-    %
-    % Library Convetion:
-    %   X : [N x p]
-    %   y : [N x 1]
-    %
-    % N = number of samples
-    % p = number of attributes
-    %
-    % Properties (Hyperparameters - for setting)
-    %
-    %   .
-    %
-    % Properties (Parameters - protected)
-    %
-    %   W = regression matrix [Nc x p] or [Nc x p+1]
-    %
-    % Methods (for external use)
-    %
-    %   yhat = predict(obj, X)	% Prediction Function
-    %
-    % Methods (protected)
-    %
-    %   .
-    %
-    % ----------------------------------------------------------------
     
     % Hyperparameters
     properties

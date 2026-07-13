@@ -1,7 +1,6 @@
 %% EXAMPLE OF A REGRESSION EXPERIMENT
 
 % Machine Learnning Toolbox
-% Author: David Nascimento Coelho
 % Last mod: 2026/07/02
 
 clear;
@@ -10,9 +9,9 @@ clc;
 %% OPTIONS
 
 % Data Options:
-dataName = "MultipleLinearRegression"; % LinearRegression MultipleLinearRegression PolynomialRegression SinRegression SincRegression FrankeFunction
+dataName = "LinearRegression"; % LinearRegression MultipleLinearRegression PolynomialRegression SinRegression SincRegression FrankeFunction
 number_of_samples = 100;
-noise_std = 0.01;
+noise_std = 0.00;
 randomState = 10;
 
 % Pre-processing options:
@@ -49,7 +48,7 @@ end
 [Xtr,Xts,Ytr,Yts] = ...
     mltoolbox.preprocessing.train_test_split.split(X,Y,'train_ratio',train_ratio);
 
-% Z-score Normalization
+% Normalization
 scaler = mltoolbox.preprocessing.DataScaler('mode',normalization);
 Xtr_norm = scaler.fit_transform(Xtr);
 Xts_norm = scaler.transform(Xts);
@@ -69,6 +68,8 @@ Yhat_ts = model.predict(Xts_norm);
 
 
 %% END
+
+
 
 
 

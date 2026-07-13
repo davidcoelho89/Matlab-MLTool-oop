@@ -3,6 +3,7 @@ classdef train_test_split
     methods (Static)
         
         function [Xtr,Xts,ytr,yts] = split(X,y,varargin)
+            
             p = inputParser;
             addParameter(p,'train_ratio',0.7,@(x) x>0 & x<1);
             addParameter(p,'shuffle',true,@islogical);

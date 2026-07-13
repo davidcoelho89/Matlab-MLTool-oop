@@ -1,31 +1,4 @@
 classdef (Abstract) LinearRegressor < mltoolbox.baseModels.BaseRegressor
-    %
-    % LINEARREGRESSOR Abstract base class for linear regressors
-    %
-    % Library Convetion:
-    %   X : [N x p]
-    %   y : [N x 1]
-    %
-    % N = number of samples
-    % p = number of attributes
-    %
-    % Properties (Hyperparameters - for setting)
-    %
-    %   .
-    %
-    % Properties (Parameters - protected)
-    %
-    %   W = regression matrix [Ny x p] or [Ny x p+1]
-    %
-    % Methods (for external use)
-    %
-    %   yhat = predict(obj, X)	% Prediction Function
-    %
-    % Methods (protected)
-    %
-    %   .
-    %
-    % ----------------------------------------------------------------
     
     % Hyperparameters
     properties
