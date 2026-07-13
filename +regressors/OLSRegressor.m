@@ -1,33 +1,4 @@
 classdef OLSRegressor < mltoolbox.baseModels.LinearRegressor
-    % 
-    % --- OLSREGRESSOR - Ordinary Least-Squares Regressor ---
-    %
-    % Library Convetion:
-    %   X : [N x p]
-    %   Y : [N x Ny]
-    %
-    % Properties (Hyperparameters)
-    %
-    %   approximation: which aproximation method is used
-    %     'pinv'       : W = Y*pinv(X);
-    %     'svd'        : W = Y/X;
-    %     'theoretical': W = Y*X'/(X*X' + regularization * eye(p,p));
-    %   regularization: used to mitigate numerical computation errors
-    %     (constant)
-    %
-    % Properties (Parameters)
-    %
-    %   .
-    %   
-    % Methods (for external use)
-    %
-    %   .
-    %
-    % Methods (protected)
-    %
-    %   .
-    %
-    % ----------------------------------------------------------------
 
     % Hyperparameters
     properties
