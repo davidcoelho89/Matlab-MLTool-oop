@@ -2,7 +2,7 @@ classdef (Abstract) LinearRegressor < mltoolbox.baseModels.BaseRegressor
     
     % Hyperparameters
     properties
-        
+        % the only hyperparameter is addBias (from baseEstimator)
     end
     
 	% Parameters

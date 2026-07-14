@@ -13,7 +13,9 @@ classdef (Abstract) BaseSystemIdentifier < handle
         regressor
         nInputSignals
         nOutputSignals
-        pastOutputs
+        modelName (1,1) string = ""
+        isTrained (1,1) logical = false
+pastOutputs
         pastInputs
         pastErrors
     end
