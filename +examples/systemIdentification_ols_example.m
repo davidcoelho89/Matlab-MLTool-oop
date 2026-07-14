@@ -9,7 +9,7 @@ clc;
 %% OPTIONS
 
 % Data Options
-
+dataName = "ARX";
 
 % Pre-processing options
 shuffle = false;
@@ -22,7 +22,7 @@ regularization = 0.0001;
 
 %% LOAD DATASET
 
-data = mltoolbox.datasets.ArtificialSystemIdentificationDataset("ARX", ...
+data = mltoolbox.datasets.ArtificialSystemIdentificationDataset(dataName, ...
     "nSamples", 1000, ...
     "noiseStd", 0.05, ...
     "randomState", 1, ...
