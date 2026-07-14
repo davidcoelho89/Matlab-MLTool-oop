@@ -1,6 +1,4 @@
-classdef RegressionMetrics
-    %REGRESSIONMETRICS Metrics for single- and multi-output regression.
-    %   Samples must be stored in rows and outputs in columns.
+classdef regressionMetrics
 
     methods (Static)
         function metrics = calculate(yTrue, yPred, varargin)
