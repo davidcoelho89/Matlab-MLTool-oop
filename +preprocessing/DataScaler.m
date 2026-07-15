@@ -58,5 +58,17 @@ classdef DataScaler < handle
             Xnorm = obj.transform(X);
         end
         
+        function X = inverse_transform(obj, Xnorm)
+            switch obj.mode
+                case "zscore"
+                    X = Xnorm .* obj.stdX + obj.meanX;
+                case "minmax"
+                    X = Xnorm .* (obj.maxX - obj.minX) + obj.minX;
+                case "bipolar"
+                    X = ((Xnorm + 1) ./ 2) .* ...
+                        (obj.maxX - obj.minX) + obj.minX;
+            end
+        end
+        
     end
 end

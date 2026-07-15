@@ -1,4 +1,4 @@
-classdef SystemIdentificationMetrics
+classdef systemIdentificationMetrics
     %SYSTEMIDENTIFICATIONMETRICS Accuracy and residual diagnostics.
     %   Samples are rows. Outputs and inputs are columns.
 
