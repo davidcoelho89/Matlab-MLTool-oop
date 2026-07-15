@@ -7,13 +7,13 @@ classdef regressionMetrics
             addParameter(p, 'NumParameters', []);
             parse(p, varargin{:});
 
-            [yTrue, yPred] = RegressionMetrics.validateSignals(yTrue, yPred);
+            [yTrue, yPred] = mltoolbox.metrics.regressionMetrics.validateSignals(yTrue, yPred);
             normalization = lower(char(p.Results.Normalization));
             nParameters = p.Results.NumParameters;
 
             validNormalizations = {'range', 'std', 'mean'};
             if ~any(strcmp(normalization, validNormalizations))
-                error('RegressionMetrics:InvalidNormalization', ...
+                error('regressionMetrics:InvalidNormalization', ...
                     'Normalization must be ''range'', ''std'', or ''mean''.');
             end
 
@@ -55,7 +55,7 @@ classdef regressionMetrics
             % MAPE ignores samples whose measured value is zero.
             APE = abs(residuals ./ yTrue);
             APE(yTrue == 0) = NaN;
-            MAPE = 100 * RegressionMetrics.meanIgnoringNaN(APE, 1);
+            MAPE = 100 * mltoolbox.metrics.regressionMetrics.meanIgnoringNaN(APE, 1);
 
             adjustedR2 = NaN(1, nOutputs);
             AIC = NaN(1, nOutputs);
@@ -103,8 +103,8 @@ classdef regressionMetrics
             metrics.overall.MSE = totalSSE / totalObservations;
             metrics.overall.RMSE = sqrt(metrics.overall.MSE);
             metrics.overall.MAE = sum(SAE) / totalObservations;
-            metrics.overall.NRMSE = RegressionMetrics.meanIgnoringNaN(NRMSE, 2);
-            metrics.overall.MAPE = RegressionMetrics.meanIgnoringNaN(MAPE, 2);
+            metrics.overall.NRMSE = mltoolbox.metrics.regressionMetrics.meanIgnoringNaN(NRMSE, 2);
+            metrics.overall.MAPE = mltoolbox.metrics.regressionMetrics.meanIgnoringNaN(MAPE, 2);
             if totalSST == 0
                 metrics.overall.R2 = NaN;
                 metrics.overall.FIT = NaN;
@@ -114,7 +114,7 @@ classdef regressionMetrics
                     (1 - sqrt(totalSSE) / sqrt(totalSST));
             end
             metrics.overall.adjustedR2 = ...
-                RegressionMetrics.meanIgnoringNaN(adjustedR2, 2);
+                mltoolbox.metrics.regressionMetrics.meanIgnoringNaN(adjustedR2, 2);
         end
     end
 
@@ -125,11 +125,11 @@ classdef regressionMetrics
             if isrow(yTrue), yTrue = yTrue(:); end
             if isrow(yPred), yPred = yPred(:); end
             if ~isequal(size(yTrue), size(yPred))
-                error('RegressionMetrics:SizeMismatch', ...
+                error('regressionMetrics:SizeMismatch', ...
                     'yTrue and yPred must have the same size.');
             end
             if any(~isfinite(yTrue(:))) || any(~isfinite(yPred(:)))
-                error('RegressionMetrics:NonFiniteData', ...
+                error('regressionMetrics:NonFiniteData', ...
                     'Signals cannot contain NaN or Inf values.');
             end
         end
