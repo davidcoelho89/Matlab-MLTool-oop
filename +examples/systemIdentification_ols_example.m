@@ -20,7 +20,7 @@ inputType = "prbs";	% prbs whitenoise step sine chirp
 shuffle = false;
 train_ratio = 0.7;
 normalization = 'zscore';
-normalize_input = true;
+normalize_input = false;
 normalize_output = false;
 
 % Model options
@@ -115,11 +115,15 @@ if normalize_input || normalize_output
 end
 
 %% SYSTEM IDENTIFICATION MODEL: LOAD / TRAIN / TEST
-% 
-% model = mltoolbox.systemIdentification.OLSIdentifier('approximation',approximation, ...
-%                                                      'regularization',regularization);
-% 
-% model.fit(utr_norm,ytr_norm);
+
+model = mltoolbox.systemId.OLSIdentifier('outputLag', 2, ...
+                                         'inputLag', 2, ...
+                                         'errorLag', 0, ...
+                                         'includeCurrentInput', false, ...
+                                         'approximation', approximation, ...
+                                         'regularization', regularization);
+
+model.fit(utr_norm,ytr_norm);
 % 
 % yhat_tr = model.predict(utr_norm,ytr_norm);
 % yhat_ts = model.predict(uts_norm,yts_norm);
