@@ -45,7 +45,7 @@ classdef (Abstract) BaseSystemIdentifier < handle
             
             sum_of_lags = obj.outputLag * obj.nOutputSignals + ...
                           obj.inputLag * obj.nInputSignals + ...
-                          obj.errorLag ;
+                          obj.errorLag * obj.nOutputSignals ;
             
             signalsLength = size(u,1);
             
