@@ -60,6 +60,9 @@ classdef ArtificialRegressionDataset
 
                 case lower("FrankeFunction")
                     obj = obj.generateFrankeFunction();
+                    
+                case lower("MultipleLinearRegressionMultiOutput")
+                    obj = obj.generateMultipleLinearRegressionMultiOutput();
 
                 otherwise
                     error("Dataset desconhecido: %s", datasetName);
@@ -172,6 +175,32 @@ classdef ArtificialRegressionDataset
             obj.description = ...
                 "Artificial Franke function regression with two input variables.";
         end
+        
+        function obj = generateMultipleLinearRegressionMultiOutput(obj)
+
+        % Three input variables
+        obj.X = randn(obj.nSamples, 3);
+
+        % Coefficient matrix
+        % Each column contains the coefficients for one output
+        beta = [ 3.0, -1.0;
+                -2.0,  4.0;
+                 1.5,  2.0];
+
+        % Intercept for each output
+        intercept = [5, -3];
+
+        % Generate outputs
+        obj.Y = obj.X * beta + intercept ...
+            + obj.noiseStd * randn(obj.nSamples, 2);
+
+        obj.featureNames = ["x1", "x2", "x3"];
+        obj.targetName = ["y1", "y2"];
+
+        obj.description = ...
+            "Artificial multiple linear regression with 3 inputs and 2 outputs.";
+
+    end    
     end
 
     methods (Static, Access = private)
