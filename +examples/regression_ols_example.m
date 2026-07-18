@@ -124,12 +124,10 @@ end
 
 numberOfParameters = size(model.W,1);
 
+disp('===== REGRESSION METRICS FROM TRAINING =====');
+
 metrics_tr = mltoolbox.metrics.regressionMetrics.calculate(Ytr,Yhat_tr,...
                                'NumParameters',numberOfParameters);
-metrics_ts = mltoolbox.metrics.regressionMetrics.calculate(Yts,Yhat_ts,...
-                               'NumParameters',numberOfParameters);
-
-disp('===== REGRESSION METRICS FROM TRAINING =====');
 
 disp('Metrics per output:');
 disp(metrics_tr.perOutput);
@@ -138,6 +136,9 @@ disp('Overall metrics:');
 disp(metrics_tr.overall);
 
 disp('===== REGRESSION METRICS FROM TEST =====');
+
+metrics_ts = mltoolbox.metrics.regressionMetrics.calculate(Yts,Yhat_ts,...
+                               'NumParameters',numberOfParameters);
 
 disp('Metrics per output:');
 disp(metrics_ts.perOutput);

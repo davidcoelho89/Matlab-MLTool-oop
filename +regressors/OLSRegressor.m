@@ -40,7 +40,7 @@ classdef OLSRegressor < mltoolbox.baseModels.LinearRegressor
             
             X = obj.addBiasTerm(X);
             
-            obj.validateFitInputs(X,Y)
+            obj.validateFitInputs(X,Y);
 
             obj.nFeatures = size(X,2);
             

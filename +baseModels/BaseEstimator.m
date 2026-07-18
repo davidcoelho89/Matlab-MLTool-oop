@@ -24,7 +24,7 @@ classdef (Abstract) BaseEstimator < handle
             end
         end
         
-    	function validateFitInputs(~, X, y)
+    	function validateFitInputs(~, X, Y)
             if ~isnumeric(X) || ~isreal(X)
                 error('X must be a real numeric matrix.');
             end
@@ -33,11 +33,11 @@ classdef (Abstract) BaseEstimator < handle
                 error('X must be a non-empty 2D matrix with size [N x p].');
             end
 
-            if isempty(y)
-                error('y must not be empty.');
+            if isempty(Y) || ~ismatrix(Y)
+                error('Y must be a non-empty 2D matrix with size [N x c].');
             end
 
-            if size(X,1) ~= size(y,1)
+            if size(X,1) ~= size(Y,1)
                 error('Number of rows in X must match Number of rows in y.');
             end
 
@@ -45,8 +45,8 @@ classdef (Abstract) BaseEstimator < handle
                 error('X must not contain NaN or Inf values.');
             end
 
-            if any(isnan(y(:))) || any(isinf(y(:)))
-                error('y must not contain NaN or Inf values.');
+            if any(isnan(Y(:))) || any(isinf(Y(:)))
+                error('Y must not contain NaN or Inf values.');
             end
         end
         
