@@ -1,31 +1,24 @@
-classdef train_test_split
-    
-    methods (Static)
-        
-        function [Xtr,Xts,ytr,yts] = split(X,y,varargin)
-            
-            p = inputParser;
-            addParameter(p,'train_ratio',0.7,@(x) x>0 & x<1);
-            addParameter(p,'shuffle',true,@islogical);
-            parse(p,varargin{:});
-            tr_ratio = p.Results.train_ratio;
-            shuffle = p.Results.shuffle;
+function [Xtr,Xts,ytr,yts] = train_test_split(X,y,varargin)
 
-            if shuffle
-                [X,y] = mltoolbox.preprocessing.shuffle_data(X,y);
-            end
+p = inputParser;
+addParameter(p,'train_ratio',0.7,@(x) x>0 & x<1);
+addParameter(p,'shuffle',true,@islogical);
+parse(p,varargin{:});
+tr_ratio = p.Results.train_ratio;
+shuffle = p.Results.shuffle;
 
-            N = size(X,1);
-            Ntr = round(tr_ratio*N);
-            train_idx = 1:Ntr;
-            test_idx  = Ntr+1:N;
+if shuffle
+    [X,y] = mltoolbox.preprocessing.shuffle_data(X,y);
+end
 
-            Xtr = X(train_idx,:);
-            Xts = X(test_idx,:);
-            ytr = y(train_idx,:);
-            yts = y(test_idx,:);
-        end
-        
-    end
-    
+N = size(X,1);
+Ntr = round(tr_ratio*N);
+train_idx = 1:Ntr;
+test_idx  = Ntr+1:N;
+
+Xtr = X(train_idx,:);
+Xts = X(test_idx,:);
+ytr = y(train_idx,:);
+yts = y(test_idx,:);
+
 end
