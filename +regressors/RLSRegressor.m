@@ -60,10 +60,15 @@ classdef RLSRegressor < mltoolbox.baseModels.LinearRegressor
         
         function obj = partial_fit(obj,x,y)
             
-            K = obj.P*x'/(obj.lambda + x*obj.P*x');
-            error = (y - x*obj.W);
-            obj.W = obj.W + K*error;
-            obj.P = (1/obj.lambda)*(obj.P - K*x*obj.P);
+            if isempty(obj.W) || isempty(obj.P)
+                obj.P = 1e+4 * eye(obj.nFeatures);
+                obj.W = zeros(obj.nFeatures,obj.nOutputs);
+            else
+                K = obj.P*x'/(obj.lambda + x*obj.P*x');
+                error = (y - x*obj.W);
+                obj.W = obj.W + K*error;
+                obj.P = (1/obj.lambda)*(obj.P - K*x*obj.P);
+            end
             
         end
         
