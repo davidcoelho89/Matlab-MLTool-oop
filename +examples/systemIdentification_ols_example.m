@@ -9,7 +9,7 @@ clc;
 %% OPTIONS
 
 % Data Options
-dataName = "ARX";
+dataName = "ARX"; % firstordersystem secondordersystem firsystem arx statespacesystem nonlinearnarx hammersteinsystem wienersystem
 number_of_samples = 500;
 noise_std = 0.05;
 randomState = 1;

@@ -76,6 +76,8 @@ classdef ArtificialSystemIdentificationDataset
                     obj = obj.generateFIRSystem();
                 case "arx"
                     obj = obj.generateARX();
+                case "arxmimo"
+                    obj = obj.generateARXMIMO();
                 case "statespacesystem"
                     obj = obj.generateStateSpaceSystem();
                 case "nonlinearnarx"
@@ -183,6 +185,50 @@ classdef ArtificialSystemIdentificationDataset
             obj.outputNames = "y";
             obj.description = ...
                 "ARX system with na = 2, nb = 2, input delay = 1 and equation noise.";
+        end
+
+        function obj = generateARXMIMO(obj)
+            % Two-input, two-output ARX model:
+            % y(k) = A1*y(k-1) + A2*y(k-2) + ...
+            %        B1*u(k-1) + B2*u(k-2) + e(k)
+
+            A1 = [ 0.65,  0.10; ...
+                  -0.05,  0.60];
+
+            A2 = [-0.12,  0.02; ...
+                   0.01, -0.10];
+
+            B1 = [0.50, 0.15; ...
+                  0.10, 0.40];
+
+            B2 = [ 0.20, -0.05; ...
+                  -0.10,  0.15];
+
+            obj.U = obj.generateInput(2);
+            obj.Y = zeros(obj.nSamples, 2);
+            processNoise = obj.noiseStd * randn(obj.nSamples, 2);
+
+            for k = 3:obj.nSamples
+                yCurrent = A1*obj.Y(k-1,:)' + A2*obj.Y(k-2,:)' + ...
+                    B1*obj.U(k-1,:)' + B2*obj.U(k-2,:)' + ...
+                    processNoise(k,:)';
+
+                obj.Y(k,:) = yCurrent';
+            end
+
+            obj.trueParameters = struct( ...
+                'A1', A1, ...
+                'A2', A2, ...
+                'B1', B1, ...
+                'B2', B2, ...
+                'outputLag', 2, ...
+                'inputLag', 2, ...
+                'delay', 1);
+
+            obj.inputNames = ["u1", "u2"];
+            obj.outputNames = ["y1", "y2"];
+            obj.description = ...
+                "MIMO ARX system with two inputs, two outputs, na = 2, nb = 2, input delay = 1 and equation noise.";
         end
 
         function obj = generateStateSpaceSystem(obj)
