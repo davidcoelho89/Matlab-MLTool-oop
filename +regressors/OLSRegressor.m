@@ -8,7 +8,7 @@ classdef OLSRegressor < mltoolbox.baseModels.LinearRegressor
     
     % Parameters
     properties (GetAccess = public, SetAccess = protected)
-        
+        P double = []
     end
     
     methods
@@ -48,16 +48,31 @@ classdef OLSRegressor < mltoolbox.baseModels.LinearRegressor
             
             obj.isTrained = true;
             
+            obj.P = (X'*X + obj.regularization*eye(obj.nFeatures)) \ eye(obj.nFeatures);
+            
             switch obj.approximation
                 case 'pinv'
                     obj.W = pinv(X) * Y;
                  case 'svd'
                     obj.W = X \ Y;
                 case 'theoretical'
-                    p = size(X,2);
-                    obj.W = (X'*X + obj.regularization*eye(p)) \ (X'*Y);
+                    obj.W = (X'*X + obj.regularization*eye(obj.nFeatures)) \ (X'*Y);
                 otherwise
                     obj.W = pinv(X) * Y;                    
+            end
+            
+        end
+        
+        function obj = partial_fit(obj,x,y)
+            
+            if isempty(obj.W) || isempty(obj.P)
+                obj.P = 1e+4 * eye(obj.nFeatures);
+                obj.W = zeros(obj.nFeatures,obj.nOutputs);
+            else
+                K = obj.P*x'/(obj.lambda + x*obj.P*x');
+                error = (y - x*obj.W);
+                obj.W = obj.W + K*error;
+                obj.P = (1/obj.lambda)*(obj.P - K*x*obj.P);
             end
             
         end
