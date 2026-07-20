@@ -22,8 +22,7 @@ normalize_input = false;
 normalize_output = false;
 
 % Model options
-approximation = 'theoretical';      % 'pinv' 'svd' 'theoretical'
-regularization = 0.0001;            % just for theoretical aproximation
+lambda = 0.99;      % forgiving factor [0.9 to 1]
 
 %% LOAD DATASET
 
@@ -82,8 +81,7 @@ end
 
 %% REGRESSION MODEL: LOAD / TRAIN / TEST
 
-model = mltoolbox.regressors.OLSRegressor('approximation',approximation, ...
-                                          'regularization',regularization);
+model = mltoolbox.regressors.RLSRegressor('lambda',lambda);
 
 model.fit(Xtr,Ytr);
 

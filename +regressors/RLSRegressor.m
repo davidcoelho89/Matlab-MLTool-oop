@@ -1,22 +1,21 @@
-classdef OLSRegressor < mltoolbox.baseModels.LinearRegressor
-
+classdef RLSRegressor < mltoolbox.baseModels.LinearRegressor
+    
     % Hyperparameters
     properties
-        approximation = 'pinv';     % | 'svd' | 'theoretical' |
-        regularization = 0.0001;
+        lambda (1,1) double = 1    % forgiving factor [0.9 to 1]
     end
     
     % Parameters
     properties (GetAccess = public, SetAccess = protected)
-        
+        P double = []
     end
     
     methods
         
         % Constructor
-        function obj = OLSRegressor(varargin)
+        function obj = RLSRegressor(varargin)
             
-            obj.modelName = "OLS Regressor";
+            obj.modelName = "RLS Regressor";
             
             if mod(nargin,2) ~= 0
                 error('Arguments must be given as name-value pairs.');
@@ -48,20 +47,26 @@ classdef OLSRegressor < mltoolbox.baseModels.LinearRegressor
             
             obj.isTrained = true;
             
-            switch obj.approximation
-                case 'pinv'
-                    obj.W = pinv(X) * Y;
-                 case 'svd'
-                    obj.W = X \ Y;
-                case 'theoretical'
-                    p = size(X,2);
-                    obj.W = (X'*X + obj.regularization*eye(p)) \ (X'*Y);
-                otherwise
-                    obj.W = pinv(X) * Y;                    
+            obj.P = 1e+4 * eye(obj.nFeatures);
+            obj.W = zeros(obj.nFeatures,obj.nOutputs);
+            
+            for i = 1:size(X,1)
+                x = X(i,:);
+                y = Y(i,:);
+                obj = partial_fit(obj,x,y);
             end
             
         end
         
-    end % end methods
+        function obj = partial_fit(obj,x,y)
+            
+            K = obj.P*x'/(obj.lambda + x*obj.P*x');
+            error = (y - x*obj.W);
+            obj.W = obj.W + K*error;
+            obj.P = (1/obj.lambda)*(obj.P - K*x*obj.P);
+            
+        end
+        
+    end
     
-end % end class
+end
