@@ -9,7 +9,7 @@ clc;
 %% OPTIONS
 
 % Data Options
-dataName = "ARX";
+dataName = "arxmimo"; % firstordersystem secondordersystem firsystem arx arxmimo statespacesystem nonlinearnarx hammersteinsystem wienersystem
 number_of_samples = 500;
 noise_std = 0.05;
 randomState = 1;
@@ -41,26 +41,26 @@ Y = data.Y;
 
 %% PLOT DATASET
 
-figure
-
-subplot(2,1,1)
-plot(data.time,U)
-ylabel("u(k)")
-grid on
-
-subplot(2,1,2)
-plot(data.time,Y)
-xlabel("Time")
-ylabel("y(k)")
-grid on
+% figure
+% 
+% subplot(2,1,1)
+% plot(data.time,U)
+% ylabel("u(k)")
+% grid on
+% 
+% subplot(2,1,2)
+% plot(data.time,Y)
+% xlabel("Time")
+% ylabel("y(k)")
+% grid on
 
 %% DATA PRE-PROCESSING
 
 % Split train x test
 [utr,uts,ytr,yts] = ...
-    mltoolbox.preprocessing.train_test_split.split(U,Y,...
-                                                   'train_ratio',train_ratio,...
-                                                   'shuffle',shuffle);
+    mltoolbox.preprocessing.train_test_split(U,Y,...
+                                            'train_ratio',train_ratio,...
+                                            'shuffle',shuffle);
 % Time vetor - train and test
 Ttr = data.time(1:size(ytr,1),:);
 Tts = data.time(size(ytr,1)+1:end,:);
