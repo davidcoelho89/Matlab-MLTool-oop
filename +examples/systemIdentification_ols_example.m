@@ -24,6 +24,10 @@ normalize_input = false;
 normalize_output = false;
 
 % Model options
+outputLags = [2 2];
+inputLags = [2 2];
+errorLags = [];
+includeCurrentInput = true;
 approximation = 'theoretical';	% 'pinv' 'svd' 'theoretical'
 regularization = 0.0001;
 
@@ -116,15 +120,15 @@ end
 
 %% SYSTEM IDENTIFICATION MODEL: LOAD / TRAIN / TEST
 
-model = mltoolbox.systemId.OLSIdentifier('outputLag', 2, ...
-                                         'inputLag', 2, ...
-                                         'errorLag', 0, ...
-                                         'includeCurrentInput', false, ...
+model = mltoolbox.systemId.OLSIdentifier('outputLags', outputLags, ...
+                                         'inputLags', inputLags, ...
+                                         'errorLags', errorLags, ...
+                                         'includeCurrentInput', includeCurrentInput, ...
                                          'approximation', approximation, ...
                                          'regularization', regularization);
 
 model.fit(utr_norm,ytr_norm);
-% 
+
 % yhat_tr = model.predict(utr_norm,ytr_norm);
 % yhat_ts = model.predict(uts_norm,yts_norm);
 
