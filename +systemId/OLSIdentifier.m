@@ -18,17 +18,17 @@ classdef OLSIdentifier < mltoolbox.baseModels.BaseSystemIdentifier
             p = inputParser;
             p.KeepUnmatched = true;
             
-            addParameter(p,'outputLag',1);
-            addParameter(p,'inputLag',0);
-            addParameter(p,'errorLag',0);
+            addParameter(p,'outputLags',[]);
+            addParameter(p,'inputLags',[]);
+            addParameter(p,'errorLags',[]);
             addParameter(p,'includeCurrentInput',false);
             
             parse(p,varargin{:});
             idParams = p.Results;
             
-            obj.outputLag = idParams.outputLag;
-            obj.inputLag = idParams.inputLag;
-            obj.errorLag = idParams.errorLag;
+            obj.outputLags = idParams.outputLags;
+            obj.inputLags = idParams.inputLags;
+            obj.errorLags = idParams.errorLags;
             obj.includeCurrentInput = idParams.includeCurrentInput;
             
             % Remove sysId hyperparameters
@@ -39,9 +39,9 @@ classdef OLSIdentifier < mltoolbox.baseModels.BaseSystemIdentifier
             regressorPairs = {};
             
             idParameterNames = {
-                'outputLag', ...
-                'inputLag', ...
-                'errorLag', ...
+                'outputLags', ...
+                'inputLags', ...
+                'errorLags', ...
                 'includeCurrentInput'
             };
             
