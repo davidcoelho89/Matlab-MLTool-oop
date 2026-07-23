@@ -133,34 +133,45 @@ model.fit(Utr_norm,Ytr_norm);
 
 yhat_ts = model.predict(Uts_norm,Yts_norm);
 
+% ToDo - Clear Memory and predict 
+% yhat_tr = model.predict(utr_norm,ytr_norm);
+
+% ToDo - Desnormlizar dados
+
+%% PLOT TEST RESULTS
+
+for i = 1:model.nOutputSignals
+
 figure;
-plot(Yts_norm(:,1),yhat_ts(:,1),'b.');
+plot(Yts_norm(:,i),yhat_ts(:,i),'b.');
 title('Yts x Yts-hat - Must be a line')
 xlabel('Yts')
 ylabel('Yts-hat')
 
-% ToDo - Clear Memory
-% yhat_tr = model.predict(utr_norm,ytr_norm);
+figure;
+hold on
+plot(Tts,yhat_ts(:,i),'b-');
+plot(Tts,Yts_norm(:,i),'r-');
+title('Yts x Yts-hat - Time series')
+xlabel('Time')
+ylabel('Signal')
+    
+end
 
 %% METRICS
 
+fprintf('\n============================================================\n');
+fprintf('              SYSTEM IDENTIFICATION METRICS\n');
+fprintf('============================================================\n');
 
+% import mltoolbox.metrics.*
+import mltoolbox.metrics.systemIdentificationMetrics
+
+metrics1 = systemIdentificationMetrics.calculate(...
+                                                 Yts_norm, ...
+                                                 yhat_ts, ...
+                                                 Uts_norm);
+disp(metrics1.regression.perOutput);
+disp(metrics1.regression.overall);
 
 %% END
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
