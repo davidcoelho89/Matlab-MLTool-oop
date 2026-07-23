@@ -6,6 +6,7 @@ classdef (Abstract) BaseSystemIdentifier < handle
         inputLags = []
         errorLags = []
         includeCurrentInput (1,1) logical = false
+        stepsAhead = 1
     end
     
     % Parameters
