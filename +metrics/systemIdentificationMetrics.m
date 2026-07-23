@@ -15,7 +15,7 @@ classdef systemIdentificationMetrics
             addParameter(p, 'SignificanceLevel', 0.05);
             parse(p, varargin{:});
 
-            regression = RegressionMetrics.calculate(yTrue, yPred, ...
+            regression = mltoolbox.metrics.regressionMetrics.calculate(yTrue, yPred, ...
                 'Normalization', p.Results.Normalization, ...
                 'NumParameters', p.Results.NumParameters);
 
@@ -44,7 +44,7 @@ classdef systemIdentificationMetrics
             for outputIndex = 1:nOutputs
                 e = residuals(:, outputIndex);
                 autocorrelation(:, outputIndex) = ...
-                    SystemIdentificationMetrics.normalizedCorrelation(e, e, maxLag);
+                    mltoolbox.metrics.systemIdentificationMetrics.normalizedCorrelation(e, e, maxLag);
 
                 positiveACF = autocorrelation(maxLag + 2:end, outputIndex);
                 positiveLags = 1:maxLag;
@@ -86,7 +86,7 @@ classdef systemIdentificationMetrics
                 for inputIndex = 1:nInputs
                     for outputIndex = 1:nOutputs
                         crossCorrelation(:, inputIndex, outputIndex) = ...
-                            SystemIdentificationMetrics.normalizedCorrelation( ...
+                            mltoolbox.metrics.systemIdentificationMetrics.normalizedCorrelation( ...
                             u(:, inputIndex), residuals(:, outputIndex), maxLag);
                     end
                 end

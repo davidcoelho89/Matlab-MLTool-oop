@@ -62,31 +62,31 @@ Y = data.Y;
 %% DATA PRE-PROCESSING
 
 % Split train x test
-[utr,uts,ytr,yts] = ...
+[Utr,Uts,Ytr,Yts] = ...
     mltoolbox.preprocessing.train_test_split(U,Y,...
                                             'train_ratio',train_ratio,...
                                             'shuffle',shuffle);
 % Time vetor - train and test
-Ttr = data.time(1:size(ytr,1),:);
-Tts = data.time(size(ytr,1)+1:end,:);
+Ttr = data.time(1:size(Ytr,1),:);
+Tts = data.time(size(Ytr,1)+1:end,:);
 
 % Normalization
 if normalize_input
     input_scaler = mltoolbox.preprocessing.DataScaler('mode',normalization);
-    utr_norm = input_scaler.fit_transform(utr);
-    uts_norm = input_scaler.transform(uts);
+    Utr_norm = input_scaler.fit_transform(Utr);
+    Uts_norm = input_scaler.transform(Uts);
 else
-    utr_norm = utr;
-    uts_norm = uts;
+    Utr_norm = Utr;
+    Uts_norm = Uts;
 end
 
 if normalize_output
     output_scaler = mltoolbox.preprocessing.DataScaler('mode',normalization);
-    ytr_norm = output_scaler.fit_transform(ytr);
-    yts_norm = output_scaler.transform(yts);
+    Ytr_norm = output_scaler.fit_transform(Ytr);
+    Yts_norm = output_scaler.transform(Yts);
 else
-    ytr_norm = ytr;
-    yts_norm = yts;
+    Ytr_norm = Ytr;
+    Yts_norm = Yts;
 end
 
 if normalize_input || normalize_output
@@ -94,12 +94,12 @@ if normalize_input || normalize_output
     figure
 
     subplot(2,1,1)
-    plot(Ttr,utr_norm)
+    plot(Ttr,Utr_norm)
     ylabel("u(k)")
     grid on
 
     subplot(2,1,2)
-    plot(Ttr,ytr_norm)
+    plot(Ttr,Ytr_norm)
     xlabel("Time")
     ylabel("y(k)")
     grid on
@@ -107,12 +107,12 @@ if normalize_input || normalize_output
     figure
 
     subplot(2,1,1)
-    plot(Tts,uts_norm)
+    plot(Tts,Uts_norm)
     ylabel("u(k)")
     grid on
 
     subplot(2,1,2)
-    plot(Tts,yts_norm)
+    plot(Tts,Yts_norm)
     xlabel("Time")
     ylabel("y(k)")
     grid on
@@ -129,30 +129,49 @@ model = mltoolbox.systemId.OLSIdentifier('outputLags', outputLags, ...
                                          'approximation', approximation, ...
                                          'regularization', regularization);
 
-model.fit(utr_norm,ytr_norm);
+model.fit(Utr_norm,Ytr_norm);
 
+yhat_ts = model.predict(Uts_norm,Yts_norm);
+
+% ToDo - Clear Memory and predict 
 % yhat_tr = model.predict(utr_norm,ytr_norm);
-% yhat_ts = model.predict(uts_norm,yts_norm);
+
+% ToDo - Desnormlizar dados
+
+%% PLOT TEST RESULTS
+
+for i = 1:model.nOutputSignals
+
+figure;
+plot(Yts_norm(:,i),yhat_ts(:,i),'b.');
+title('Yts x Yts-hat - Must be a line')
+xlabel('Yts')
+ylabel('Yts-hat')
+
+figure;
+hold on
+plot(Tts,yhat_ts(:,i),'b-');
+plot(Tts,Yts_norm(:,i),'r-');
+title('Yts x Yts-hat - Time series')
+xlabel('Time')
+ylabel('Signal')
+    
+end
 
 %% METRICS
 
+fprintf('\n============================================================\n');
+fprintf('              SYSTEM IDENTIFICATION METRICS\n');
+fprintf('============================================================\n');
 
+% import mltoolbox.metrics.*
+import mltoolbox.metrics.systemIdentificationMetrics
+
+metrics1 = systemIdentificationMetrics.calculate(...
+                                                 Yts_norm, ...
+                                                 yhat_ts, ...
+                                                 Uts_norm);
+disp(metrics1.regression.perOutput);
+disp(metrics1.regression.overall);
 
 %% END
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
