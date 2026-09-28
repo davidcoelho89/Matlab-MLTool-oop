@@ -2,8 +2,8 @@ classdef ArtificialClassificationDataset
     %ARTIFICIALCLASSIFICATIONDATASET Artificial datasets for classification.
     %
     %   The generated data follow the convention:
-    %       inputs  : p x N (p features and N samples)
-    %       outputs : 1 x N (integer class labels from 1 to nClasses)
+    %       inputs  : N x p (N samples and p features)
+    %       outputs : N x 1 (integer class labels from 1 to nClasses)
     %
     %   Example:
     %       data = ArtificialClassificationDataset("GaussianBlobs", ...
@@ -122,19 +122,19 @@ classdef ArtificialClassificationDataset
         function obj = generateGaussianBlobs(obj)
             % Random Gaussian clusters in a p-dimensional space.
             counts = obj.samplesPerClass();
-            centers = 4 * randn(obj.nFeatures, obj.nClasses);
+            centers = 4 * randn(obj.nClasses, obj.nFeatures);
 
-            obj.inputs = zeros(obj.nFeatures, obj.nSamples);
-            obj.outputs = zeros(1, obj.nSamples);
+            obj.inputs = zeros(obj.nSamples, obj.nFeatures);
+            obj.outputs = zeros(obj.nSamples, 1);
 
             first = 1;
             clusterStd = obj.noiseStd;
 
             for c = 1:obj.nClasses
                 last = first + counts(c) - 1;
-                obj.inputs(:, first:last) = centers(:, c) + ...
-                    clusterStd * randn(obj.nFeatures, counts(c));
-                obj.outputs(first:last) = c;
+                obj.inputs(first:last, :) = centers(c, :) + ...
+                    clusterStd * randn(counts(c), obj.nFeatures);
+                obj.outputs(first:last, 1) = c;
                 first = last + 1;
             end
 
@@ -145,23 +145,23 @@ classdef ArtificialClassificationDataset
         function obj = generateLinearClassification(obj)
             % Classes separated mainly along the first feature.
             counts = obj.samplesPerClass();
-            obj.inputs = zeros(obj.nFeatures, obj.nSamples);
-            obj.outputs = zeros(1, obj.nSamples);
+            obj.inputs = zeros(obj.nSamples, obj.nFeatures);
+            obj.outputs = zeros(obj.nSamples, 1);
 
             classPositions = linspace(-2, 2, obj.nClasses);
             first = 1;
 
             for c = 1:obj.nClasses
                 last = first + counts(c) - 1;
-                x = randn(obj.nFeatures, counts(c));
-                x(1, :) = classPositions(c) + obj.noiseStd * x(1, :);
+                x = randn(counts(c), obj.nFeatures);
+                x(:, 1) = classPositions(c) + obj.noiseStd * x(:, 1);
 
                 if obj.nFeatures > 1
-                    x(2:end, :) = 0.5 * x(2:end, :);
+                    x(:, 2:end) = 0.5 * x(:, 2:end);
                 end
 
-                obj.inputs(:, first:last) = x;
-                obj.outputs(first:last) = c;
+                obj.inputs(first:last, :) = x;
+                obj.outputs(first:last, 1) = c;
                 first = last + 1;
             end
 
@@ -176,12 +176,12 @@ classdef ArtificialClassificationDataset
             t1 = pi * rand(1, counts(1));
             t2 = pi * rand(1, counts(2));
 
-            moon1 = [cos(t1); sin(t1)];
-            moon2 = [1 - cos(t2); 0.5 - sin(t2)];
+            moon1 = [cos(t1(:)), sin(t1(:))];
+            moon2 = [1 - cos(t2(:)), 0.5 - sin(t2(:))];
 
-            obj.inputs = [moon1, moon2] + ...
-                obj.noiseStd * randn(2, obj.nSamples);
-            obj.outputs = [ones(1, counts(1)), 2 * ones(1, counts(2))];
+            obj.inputs = [moon1; moon2] + ...
+                obj.noiseStd * randn(obj.nSamples, 2);
+            obj.outputs = [ones(counts(1), 1); 2 * ones(counts(2), 1)];
             obj.description = "Two interleaving half-moon classes.";
         end
 
@@ -192,22 +192,22 @@ classdef ArtificialClassificationDataset
             t1 = 2*pi * rand(1, counts(1));
             t2 = 2*pi * rand(1, counts(2));
 
-            outerCircle = [cos(t1); sin(t1)];
-            innerCircle = 0.45 * [cos(t2); sin(t2)];
+            outerCircle = [cos(t1(:)), sin(t1(:))];
+            innerCircle = 0.45 * [cos(t2(:)), sin(t2(:))];
 
-            obj.inputs = [outerCircle, innerCircle] + ...
-                obj.noiseStd * randn(2, obj.nSamples);
-            obj.outputs = [ones(1, counts(1)), 2 * ones(1, counts(2))];
+            obj.inputs = [outerCircle; innerCircle] + ...
+                obj.noiseStd * randn(obj.nSamples, 2);
+            obj.outputs = [ones(counts(1), 1); 2 * ones(counts(2), 1)];
             obj.description = "Two concentric circular classes.";
         end
 
         function obj = generateXOR(obj)
             obj.requireTwoClassesAndFeatures("XOR", 2, 2);
 
-            x = 2 * rand(2, obj.nSamples) - 1;
-            y = 1 + double((x(1, :) >= 0) == (x(2, :) >= 0));
+            x = 2 * rand(obj.nSamples, 2) - 1;
+            y = 1 + double((x(:, 1) >= 0) == (x(:, 2) >= 0));
 
-            obj.inputs = x + obj.noiseStd * randn(2, obj.nSamples);
+            obj.inputs = x + obj.noiseStd * randn(obj.nSamples, 2);
             obj.outputs = y;
             obj.description = "Two-dimensional nonlinear XOR problem.";
         end
@@ -218,8 +218,8 @@ classdef ArtificialClassificationDataset
             end
 
             counts = obj.samplesPerClass();
-            obj.inputs = zeros(2, obj.nSamples);
-            obj.outputs = zeros(1, obj.nSamples);
+            obj.inputs = zeros(obj.nSamples, 2);
+            obj.outputs = zeros(obj.nSamples, 1);
             first = 1;
 
             for c = 1:obj.nClasses
@@ -228,11 +228,12 @@ classdef ArtificialClassificationDataset
                 angle = 1.75 * 2*pi * radius + ...
                     2*pi*(c - 1)/obj.nClasses;
 
-                points = [radius .* cos(angle); radius .* sin(angle)];
-                points = points + obj.noiseStd * randn(2, counts(c));
+                points = [radius(:) .* cos(angle(:)), ...
+                    radius(:) .* sin(angle(:))];
+                points = points + obj.noiseStd * randn(counts(c), 2);
 
-                obj.inputs(:, first:last) = points;
-                obj.outputs(first:last) = c;
+                obj.inputs(first:last, :) = points;
+                obj.outputs(first:last, 1) = c;
                 first = last + 1;
             end
 
@@ -255,8 +256,8 @@ classdef ArtificialClassificationDataset
 
         function obj = shuffleSamples(obj)
             order = randperm(obj.nSamples);
-            obj.inputs = obj.inputs(:, order);
-            obj.outputs = obj.outputs(:, order);
+            obj.inputs = obj.inputs(order, :);
+            obj.outputs = obj.outputs(order, :);
         end
 
         function obj = setMetadata(obj)
