@@ -26,7 +26,7 @@ classdef (Abstract) LinearClassifier < mltoolbox.baseModels.BaseClassifier
             if ~isempty(obj.encoder)
                 yhat = obj.encoder.inverse_transform(y_hat_mult);
             else
-                [~, yhat] = max(y_hat_mult, [], 2);
+                yhat = obj.decodeScores(y_hat_mult);
             end
             
         end
